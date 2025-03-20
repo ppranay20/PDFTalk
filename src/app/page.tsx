@@ -9,6 +9,7 @@ export default async function page() {
   const { userId } = await auth();
   const isAuth = !!userId;
 
+
   return (
     <div className="w-screen min-h-screen flex items-center justify-center bg-gradient-to-r from-rose-100 to-teal-100 relative">
         <div className="flex flex-col items-center text-center">
