@@ -4,14 +4,31 @@ import { Input } from './ui/input';
 import { Send } from 'lucide-react';
 import { Button } from './ui/button';
 import MessageList from './MessageList';
+import { useEffect } from 'react';
 
 export default function ChatComponent({ chatId}: {
     chatId: number
 }) {
-    const { input, handleInputChange, handleSubmit, messages } = useChat();
+    // Todo --> Fetch all chats and make this server component
+
+    const { input, handleInputChange, handleSubmit, messages } = useChat({
+        body: {
+            chatId
+        }
+    });
+
+    useEffect(() => {
+        const messageContainer = document.getElementById('message-container');
+        if(messageContainer) {
+            messageContainer.scroll({
+                top: messageContainer.scrollHeight,
+                behavior: 'smooth'
+            })
+        }
+    },[messages])
 
   return (
-    <div className="relative max-h-screen overflow-scroll">
+    <div className="relative max-h-screen overflow-scroll" id='message-container'>
         <div className="sticky top-0 inset-x-0 p-2 bg-white h-fit"> 
             <h3 className='text-xl font-bold'>Chat</h3>
         </div>

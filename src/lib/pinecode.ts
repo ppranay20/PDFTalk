@@ -9,7 +9,7 @@ import md5 from 'md5';
 import { convertToAscii } from "./utils";
 import { generateEmbeddings } from "./embeddings";
 
-const pc = new Pinecone({
+export const pc = new Pinecone({
   apiKey: process.env.PINECONE_API_KEY as string,
 });
 
@@ -34,7 +34,7 @@ export async function loadS3IntoPinecode(fileKey: string) {
   
   const vectors = await Promise.all(documents.flat().map(embedDocuments));
   await createIndex();
-  const index = pc.index("chatpdf").namespace("chats");
+  const index = pc.index("chatpdf").namespace(fileKey);
   await index.upsert(vectors);
 }
 
