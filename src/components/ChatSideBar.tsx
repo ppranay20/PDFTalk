@@ -5,19 +5,69 @@ import React from "react";
 import { Button } from "./ui/button";
 import { MessageCircle, PlusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import axios from "axios";
 // import SubscriptionButton from "./SubscriptionButton";f
 
-interface Chats { 
+interface Chats {
   chats: Chat[];
   chatId: number;
-};
+}
 
 const ChatSideBar = ({ chats, chatId }: Chats) => {
   const [loading, setLoading] = React.useState(false);
-  for(let i = 0 ; i<10 ; i++) {
-    chats.push(chats[0]);
-  }
+
+  const handlePayment = async () => {
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/create-order", { method: "POST" });
+      const { orderId } = await response.json();
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: 100 * 100,
+        currency: "INR",
+        name: "CHAT PDF",
+        description: "TEST Transaction",
+        order_id: orderId,
+        handler: async function (response: any) {
+          const data = {
+            orderCreationId: orderId,
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpayOrderId: response.razorpay_order_id,
+            razorpaySignature: response.razorpay_signature,
+           };
+
+           const result = await fetch('/api/verify', {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { 'Content-Type': 'application/json' }
+           });
+
+           const res = await result.json();
+           if(res.isOk) {
+            alert("Payment Success");
+           } else {
+            alert(res.message);
+           }
+        },
+        prefill: {
+          name: "John Doe",
+          email: "jogn@gmail.com",
+          contact: "99999999",
+        },
+      };
+      
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on('payment.failed', function(response: any) {
+        alert(response.error.description);
+      });
+      rzp.open();
+    } catch (error) {
+      console.error("Payment failed", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="w-full h-screen p-4 overflow-y-scroll text-gray-200 bg-gray-900">
@@ -44,6 +94,11 @@ const ChatSideBar = ({ chats, chatId }: Chats) => {
             </div>
           </Link>
         ))}
+      </div>
+      <div>
+        <Button disabled={loading} onClick={handlePayment}>
+          Payment
+        </Button>
       </div>
     </div>
   );
