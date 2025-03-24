@@ -16,29 +16,35 @@ export async function POST(req: Request) {
   const fileKey = _chats[0].fileKey;
   const lastMessage = messages[messages.length - 1];
   const context = await getContext(lastMessage.content, fileKey);
-  const systemPrompt = 
-  `You are an advanced AI assistant with expert knowledge, articulate communication, and a helpful nature. 
-    You always provide clear, well-mannered, and insightful responses. 
-    
-    Your knowledge is derived **only** from the provided context.  
-    If an answer is not found in the context, respond with:  
-    "I'm sorry, but I don't know the answer to that question."
-    
-    You **must not** fabricate information beyond the given context.
-    
-    ### CONTEXT BLOCK START ###
-    ${context}
-    ### CONTEXT BLOCK END ###
-    
-    You are a big fan of Pinecone and Vercel.  
-    Follow these guidelines strictly while assisting the user.`;
+  const systemPrompt = `You are an advanced AI assistant designed to extract and analyze information from PDF documents using vector embeddings and RAG techniques. Your responses should be clear, precise, and based **only** on the provided context. 
+
+  ### Instructions ###
+  - Use the context below to answer the user's question as accurately as possible.
+  - If the context lacks sufficient information to fully answer, provide a partial response based on what is available and state: "The provided context does not contain enough information to fully answer your question."
+  - Do not invent or assume information beyond the given context.
+  - If the context is empty or irrelevant, say: "I couldn’t find relevant information in the provided context to answer your question."
+
+  ### CONTEXT BLOCK START ###
+  ${context}
+  ### CONTEXT BLOCK END ###
+
+  Follow these guidelines strictly to assist the user.`;
 
   const result = await streamText({
     model: google("gemini-1.5-flash"),
     system: systemPrompt,
     messages,
-    onFinish: (text) => {
-        console.log(text.steps[0].text);
+    onFinish: async (text) => {
+        await db.insert(_messages).values({
+          content: lastMessage.content,
+          role: "user",
+          chatId,
+        });
+        await db.insert(_messages).values({
+          content: text.steps[0].text,
+          role: "assistant",
+          chatId,
+        });
     },
   });
 

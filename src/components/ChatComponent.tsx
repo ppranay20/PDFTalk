@@ -4,38 +4,69 @@ import { Input } from './ui/input';
 import { Send } from 'lucide-react';
 import { Button } from './ui/button';
 import MessageList from './MessageList';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { ScrollArea } from './ui/scroll-area';
+import { useQuery } from '@tanstack/react-query';
+import { usePathname } from 'next/navigation';
 
 export default function ChatComponent({ chatId}: {
     chatId: number
 }) {
-    // Todo --> Fetch all chats and make this server component
+    const pathname = usePathname();
+    const { data,isLoading } = useQuery({
+        queryKey: ['messages',chatId],
+        queryFn: async () => {
+            const response = await fetch('/api/get-messages',{
+                method: 'POST',
+                body: JSON.stringify({chatId}),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            return data;
+        },
+        enabled: !!pathname,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+        refetchOnMount: false,
+        staleTime: Infinity,
+        gcTime: Infinity,
+        retry: 1,
+    });
 
     const { input, handleInputChange, handleSubmit, messages } = useChat({
         body: {
             chatId
-        }
+        },
+        initialMessages: data
     });
 
-    useEffect(() => {
-        const messageContainer = document.getElementById('message-container');
-        if(messageContainer) {
-            messageContainer.scroll({
-                top: messageContainer.scrollHeight,
-                behavior: 'smooth'
-            })
-        }
-    },[messages])
+    const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const scrollArea = scrollAreaRef.current;
+    if (scrollArea) {
+        scrollArea.scrollTo({
+          top: scrollArea.scrollHeight,
+          behavior: 'smooth',
+        });
+    }
+  }, [messages]);
 
   return (
-    <div className="relative max-h-screen overflow-scroll" id='message-container'>
+    <div className="relative h-screen overflow-hidden flex flex-col">
         <div className="sticky top-0 inset-x-0 p-2 bg-white h-fit"> 
             <h3 className='text-xl font-bold'>Chat</h3>
         </div>
 
-        <MessageList messages={messages} isLoading={false} />
+        <div ref={scrollAreaRef} className='py-4 flex-1 overflow-y-auto' id='message-container'>
+            <MessageList messages={messages} isLoading={isLoading} />
+        </div>
 
-        <form onSubmit={handleSubmit} className='sticky bottom-0 inset-x-0 px-2 py-4 bg-white'>
+
+        <form onSubmit={handleSubmit} className='bg-white m-4'>
             <div className='flex'>
                 <Input
                     value={input}

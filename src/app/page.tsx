@@ -1,5 +1,8 @@
+import ChatButton from "@/components/ChatButton";
 import FileUpload from "@/components/FileUpload";
 import { Button } from "@/components/ui/button";
+import { db } from "@/lib/db";
+import { chats } from "@/lib/db/schema";
 import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { LogIn } from "lucide-react";
@@ -9,22 +12,27 @@ export default async function page() {
   const { userId } = await auth();
   const isAuth = !!userId;
 
+  const previousChats = await db.select().from(chats);
 
   return (
-    <div className="w-screen min-h-screen flex items-center justify-center bg-gradient-to-r from-rose-100 to-teal-100 relative">
-        <div className="flex flex-col items-center text-center">
+    <div className="w-screen min-h-screen flex flex-col bg-gradient-to-r from-sky-300 to-sky-100  relative">
+      <div className="flex justify-end m-5">
+        <UserButton />
+      </div>
+      <div className="flex-1 flex justify-center items-center">
+        <div className="flex flex-col items-center justify-center text-center max-w-md w-full">
           <div className="flex items-center">
-            <h1 className="mr-3 text-5xl font-semibold">Chat with any PDF</h1>
+            <h1 className="mr-3 text-5xl font-semibold">PDF Talk</h1>
           </div>
 
           <div className="flex mt-2">
             {
-              isAuth && <Button>Go to  chats</Button>
+              isAuth &&
+                <ChatButton previousChats={previousChats} />
             }
           </div>
           <p className="max-w-xl mt-1 text-lg text-slate-600">
-            Join millions of students, researchers and professionals to instantly
-            answer questions and understand research with AI
+          Transform Your PDFs into Conversations with AI Magic!
           </p>
           <div className="w-full mt-4">
             {
@@ -38,6 +46,7 @@ export default async function page() {
             }
           </div>
         </div>
+      </div>
     </div>
   )
 }

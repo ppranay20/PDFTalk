@@ -4,7 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Provider from "@/components/Provider";
 import { Toaster } from 'react-hot-toast';
-import Script from "next/script";
+import { dark, neobrutalism } from '@clerk/themes'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,11 +31,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-         <Script
-                id="razorpay-checkout-js"
-                src="https://checkout.razorpay.com/v1/checkout.js"
-              />
-        <ClerkProvider>
+        <ClerkProvider
+          appearance={{
+            baseTheme: neobrutalism
+          }}
+        >
           <Provider>
             {children}
             <Toaster />

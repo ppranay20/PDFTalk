@@ -4,8 +4,9 @@ import PDFViewer from "@/components/PDFViewer";
 import { db } from "@/lib/db";
 import { chats } from "@/lib/db/schema";
 import { auth } from "@clerk/nextjs/server"
+import { error } from "console";
 import { eq } from "drizzle-orm";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export default async function page({ params}: {
     params: Promise<{chatId: string}>
@@ -21,7 +22,7 @@ export default async function page({ params}: {
   const _chats = await db.select().from(chats).where(eq(chats.userId, userId));
 
   if(!_chats) {
-    return redirect('/');
+    notFound();
   }
 
   const currentChat = _chats.find(chat => chat.id === Number(chatId));
@@ -30,7 +31,7 @@ export default async function page({ params}: {
     <div className="flex min-h-screen">
       <div className="flex w-full h-full">
         {/* chat sidebar */}
-        <div className="flex-[2] max-w-xs">
+        <div className="flex-[1] max-w-xs">
           <ChatSideBar chats={_chats} chatId={Number(chatId)} />
         </div>
         {/* pdf viewer */}
