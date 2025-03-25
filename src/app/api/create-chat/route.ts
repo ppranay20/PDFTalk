@@ -14,7 +14,7 @@ export async function POST(req: Request, res: Response) {
   try {
     const body = await req.json();
     const { fileKey, fileName } = body;
-    const pages = await loadS3IntoPinecode(fileKey);
+    await loadS3IntoPinecode(fileKey);
     const url = await getS3Url(fileKey);
     const chatId = await db
       .insert(chats)

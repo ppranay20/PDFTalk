@@ -35,16 +35,22 @@ export async function POST(req: Request) {
     system: systemPrompt,
     messages,
     onFinish: async (text) => {
+      try {
         await db.insert(_messages).values({
           content: lastMessage.content,
           role: "user",
           chatId,
         });
+
         await db.insert(_messages).values({
           content: text.steps[0].text,
           role: "assistant",
           chatId,
         });
+      } catch (dbError) {
+        console.error("Error saving messages to database:", dbError);
+        throw new Error("Failed to save messages to the database");
+      }
     },
   });
 

@@ -8,6 +8,7 @@ import { useEffect, useRef } from 'react';
 import { ScrollArea } from './ui/scroll-area';
 import { useQuery } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 export default function ChatComponent({ chatId}: {
     chatId: number
@@ -36,7 +37,7 @@ export default function ChatComponent({ chatId}: {
         retry: 1,
     });
 
-    const { input, handleInputChange, handleSubmit, messages } = useChat({
+    const { input, handleInputChange, handleSubmit, messages, error } = useChat({
         body: {
             chatId
         },
@@ -54,6 +55,12 @@ export default function ChatComponent({ chatId}: {
         });
     }
   }, [messages]);
+
+  useEffect(() => {
+    if(error) {
+        toast.error("Chat Error");
+    };
+  }, [error])
 
   return (
     <div className="relative h-screen overflow-hidden flex flex-col">

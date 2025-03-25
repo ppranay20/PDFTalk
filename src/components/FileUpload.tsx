@@ -2,7 +2,7 @@
 
 import { uploadToS3 } from "@/actions/uploadToS3";
 import { useMutation } from "@tanstack/react-query";
-import { Axis3DIcon, Inbox, Loader2 } from "lucide-react";
+import { Inbox, Loader2 } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -35,8 +35,9 @@ export default function FileUpload() {
     onDrop: async (acceptedFiles) => {
       const file = acceptedFiles[0];
 
-      if (file.size > 1 * 1024 * 1024) {
-        toast.error("Please upload the file less the 10mb");
+      // if file size 
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Please upload the file less the 5mb");
         return;
       }
 
@@ -44,7 +45,6 @@ export default function FileUpload() {
         setIsUploading(true);
         const response = await uploadToS3(file);
         const data = response?.data;
-        console.log(data);
         if (!data?.fileKey || !data?.fileName) {
           toast.error("Something went wrong");
           return;
@@ -76,12 +76,12 @@ export default function FileUpload() {
             "border-dashed border-2 rounded-xl py-8 cursor-pointer bg-gray-50 flex flex-col justify-center items-center",
         })}
       >
-        <input {...getInputProps()} />
+        <input disabled={isUploading} {...getInputProps()} />
         {isUploading || status === "pending" ? (
           <>
             <Loader2 className="h-10 w-10 text-blue-500 animate-spin" />
             <p className="mt-2 text-sm text-slate-400">
-              Spilling Tea to GPT...
+              Uploading you file...
             </p>
           </>
         ) : (

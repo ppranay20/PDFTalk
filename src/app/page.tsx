@@ -11,7 +11,8 @@ import Link from "next/link";
 export default async function page() {
   const { userId } = await auth();
   const isAuth = !!userId;
-
+  
+  // get previous chats
   const previousChats = await db.select().from(chats);
 
   return (

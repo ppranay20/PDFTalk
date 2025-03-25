@@ -34,7 +34,7 @@ export async function loadS3IntoPinecode(fileKey: string) {
   
   const vectors = await Promise.all(documents.flat().map(embedDocuments));
   await createIndex();
-  const index = pc.index("chatpdf").namespace(fileKey);
+  const index = pc.index("pdftalk").namespace(fileKey);
   await index.upsert(vectors);
 }
 
@@ -58,8 +58,8 @@ async function embedDocuments(doc: Document) {
 }
 
 async function createIndex() {
-  const indexName = "chatpdf";
-  const isIndexExists = await pc.describeIndex("chatpdf");
+  const indexName = "pdftalk";
+  const isIndexExists = await findIndex(indexName);
   if(isIndexExists) {
     return;
   }
@@ -97,4 +97,11 @@ async function prepareDocument(page: PDFPage) {
   ]);
 
   return docs;
+}
+
+async function findIndex(indexName: string) {
+  const indexesList = await pc.listIndexes();
+
+  return indexesList.indexes?.some(index => index.name === indexName);
+  
 }

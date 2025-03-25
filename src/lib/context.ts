@@ -8,7 +8,7 @@ type Metadata = {
 
 export async function getMatchedEmbeddings(embeddings: number[], fileKey: string) {
     try {
-        const index = await pc.Index('chatpdf');
+        const index = await pc.Index('pdftalk');
         const response = await index.namespace(fileKey).query({
             topK: 5,
             vector: embeddings,
@@ -18,6 +18,7 @@ export async function getMatchedEmbeddings(embeddings: number[], fileKey: string
         return response.matches || [];
     } catch(error) {
         console.log(`error quering embeddings`, error);
+        throw new Error("Error Quering embeddings");
     }
 }
 
@@ -26,8 +27,10 @@ export async function getContext(query: string, fileKey: string) {
     const matches = await getMatchedEmbeddings(queryEmbeddings, fileKey);
 
     const qualifyingDocs = matches!.filter(
-        (match) => match.score && match.score > 0.7
+        (match) => match.score && match.score > 0.3
     );
+
+    console.log(qualifyingDocs);
 
     let docs = qualifyingDocs.map((match) => (match.metadata as Metadata).text);
     return docs.join("\n").substring(0,3000);

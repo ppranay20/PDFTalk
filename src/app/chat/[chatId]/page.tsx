@@ -14,7 +14,6 @@ export default async function page({ params}: {
   const { userId } = await auth();
   const { chatId }  = await params;
 
-
   if(!userId) {
     return redirect('/sign-in')
   }
@@ -22,16 +21,20 @@ export default async function page({ params}: {
   const _chats = await db.select().from(chats).where(eq(chats.userId, userId));
 
   if(!_chats) {
-    notFound();
+    return redirect('/')
   }
 
   const currentChat = _chats.find(chat => chat.id === Number(chatId));
+
+  if(!currentChat) {
+    return notFound();
+  }
 
   return (
     <div className="flex min-h-screen">
       <div className="flex w-full h-full">
         {/* chat sidebar */}
-        <div className="flex-[1] max-w-xs">
+        <div className="flex-[2] max-w-sm w-full">
           <ChatSideBar chats={_chats} chatId={Number(chatId)} />
         </div>
         {/* pdf viewer */}
