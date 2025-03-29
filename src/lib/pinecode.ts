@@ -6,7 +6,6 @@ import {
   RecursiveCharacterTextSplitter,
 } from "@pinecone-database/doc-splitter";
 import md5 from 'md5';
-import { convertToAscii } from "./utils";
 import { generateEmbeddings } from "./embeddings";
 
 export const pc = new Pinecone({
