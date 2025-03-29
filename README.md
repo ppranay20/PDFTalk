@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# pdfTalk
 
-## Getting Started
+pdfTalk is a RAG (Retrieval-Augmented Generation) application built with **Next.js**. It allows users to upload PDF files, generates embeddings from the content, and enables users to ask questions about the PDF.
 
-First, run the development server:
+## 🚀 Features
+- Upload PDFs and generate embeddings for efficient retrieval.
+- Ask questions about the PDF content.
+- Secure authentication using **Clerk**.
+- Scalable vector storage with **Pinecone**.
+- Persistent and reliable data storage with **Neon.tech**.
+- ORM integration with **Drizzle** for database management.
+- File storage using **AWS S3**.
+- Advanced AI responses powered by **Gemini**.
+- Integration with **Vercel AI SDK** for efficient AI handling.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🛠️ Technologies Used
+- **Next.js** – Frontend framework.
+- **Clerk** – Authentication.
+- **Pinecone** – Vector database.
+- **Neon.tech** – PostgreSQL database.
+- **Drizzle** – Type-safe ORM.
+- **AWS S3** – File storage.
+- **Gemini** – AI response generation.
+- **Vercel AI SDK** – AI handling and integration.
+
+## 📁 Environment Variables
+To run this project, set up the following environment variables in your `.env` file:
+
+```env
+# Clerk Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=
+NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=
+NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=
+
+# Database
+DATABASE_URL=
+
+# AWS S3 Storage
+AWS_REGION=
+AWS_ACCESS_KEY=
+AWS_SECRET_KEY=
+AWS_BUCKET_NAME=
+
+# Pinecone Vector Database
+PINECONE_API_KEY=
+
+# Google Generative AI
+GOOGLE_GENERATIVE_AI_API_KEY=
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📦 Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Clone the repository:**
+```bash
+git clone https://github.com/yourusername/pdfTalk.git
+cd pdfTalk
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Install dependencies:**
+```bash
+npm install
+```
 
-## Learn More
+3. **Set up environment variables:**
+- Create a `.env` file in the root directory.
+- Add the required environment variables listed above.
 
-To learn more about Next.js, take a look at the following resources:
+4. **Run the development server:**
+```bash
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+✅ **Open** [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔍 Usage
+1. **Sign in** using Clerk authentication.
+2. **Upload** a PDF file.
+3. **Ask questions** about the content of the PDF.
+4. View AI-generated responses powered by Gemini.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
